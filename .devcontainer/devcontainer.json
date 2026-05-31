@@ -1,7 +1,6 @@
 {
-  "name": "cs128",
+  "name": "phonoengine",
   "image": "michaelrnowak/cpp-dev-container:latest",
-  //"image": "cs128dev",
 
   "customizations": {
     "vscode":{

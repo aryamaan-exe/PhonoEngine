@@ -16,6 +16,9 @@ public:
         bool tenseness,
         bool roundedness);
   Height GetHeight();
+  Backness GetBackness();
+  bool GetTenseness();
+  bool GetRoundedness();
 
 private:
   Height height_;

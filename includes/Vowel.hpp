@@ -17,8 +17,8 @@ public:
         bool roundedness);
   Height GetHeight();
   Backness GetBackness();
-  bool GetTenseness();
-  bool GetRoundedness();
+  bool GetTenseness() const;
+  bool GetRoundedness() const;
 
 private:
   Height height_;

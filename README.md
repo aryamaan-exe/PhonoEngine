@@ -4,6 +4,8 @@ Language phonology validator and rule engine.
 
 C++ development environment cloned from [here](https://github.com/cs128-illinois/env-dotfiles).
 
+The file `src/driver.cc` contains some example code for using the classes described below.
+
 ## Classes
 
 ### Phoneme

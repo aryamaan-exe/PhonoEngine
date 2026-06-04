@@ -1,8 +1,8 @@
 #include "Syllable.hpp"
 
-Syllable::Syllable(std::vector<Phoneme*>& onset,
-                   std::vector<Phoneme*>& nucleus,
-                   std::vector<Phoneme*>& coda):
+Syllable::Syllable(const std::vector<Phoneme*>& onset,
+                   const std::vector<Phoneme*>& nucleus,
+                   const std::vector<Phoneme*>& coda):
     onset_(onset), nucleus_(nucleus), coda_(coda) {}
 
 std::vector<Phoneme*> Syllable::GetOnset() { return onset_; }

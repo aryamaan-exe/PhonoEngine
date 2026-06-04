@@ -7,9 +7,9 @@
 
 class Syllable {
 public:
-  Syllable(std::vector<Phoneme*>& onset,
-           std::vector<Phoneme*>& nucleus,
-           std::vector<Phoneme*>& coda);
+  Syllable(const std::vector<Phoneme*>& onset,
+           const std::vector<Phoneme*>& nucleus,
+           const std::vector<Phoneme*>& coda);
 
   std::vector<Phoneme*> GetOnset();
   std::vector<Phoneme*> GetNucleus();

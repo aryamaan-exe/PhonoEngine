@@ -10,3 +10,9 @@ Consonant::Consonant(std::string symbol,
     place_(place),
     manner_(manner),
     voiced_(voicing) {}
+
+Place Consonant::GetPlace() { return place_; }
+
+Manner Consonant::GetManner() { return manner_; }
+
+bool Consonant::Voiced() { return voiced_; }

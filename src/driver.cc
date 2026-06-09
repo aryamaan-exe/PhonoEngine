@@ -24,6 +24,7 @@ int main() {
 
   auto* rule = new Rule(
       "Nucleus must exist",
+      RuleType::Nucleus,
       [](const std::vector<Phoneme*>& nucleus) { return !nucleus.empty(); });
 
   std::cout << std::boolalpha << rule->IsValid(bar->GetNucleus()) << std::endl;
@@ -81,10 +82,12 @@ int main() {
 
   auto* nucleus_exists = new Rule(
       "Nucleus must exist",
+      RuleType::Nucleus,
       [](const std::vector<Phoneme*>& nucleus) { return !nucleus.empty(); });
 
   auto* nucleus_only_vowels =
       new Rule("Nucleus must contain only vowels",
+               RuleType::Nucleus,
                [](const std::vector<Phoneme*>& nucleus) {
                  for (Phoneme* p : nucleus) {
                    if (p->GetType() != kVowel) return false;
@@ -94,6 +97,7 @@ int main() {
 
   auto* onset_only_consonants =
       new Rule("Onset must contain only consonants",
+               RuleType::Onset,
                [](const std::vector<Phoneme*>& onset) {
                  for (Phoneme* p : onset) {
                    if (p->GetType() != kConsonant) return false;
@@ -102,6 +106,7 @@ int main() {
                });
 
   auto* coda_only_consonants = new Rule("Coda must contain only consonants",
+                                        RuleType::Coda,
                                         [](const std::vector<Phoneme*>& coda) {
                                           for (Phoneme* p : coda) {
                                             if (p->GetType() != kConsonant)
@@ -112,38 +117,41 @@ int main() {
 
   auto* max_onset_size = new Rule(
       "Onset may have at most 3 consonants",
+      RuleType::Onset,
       [](const std::vector<Phoneme*>& onset) { return onset.size() <= 3; });
 
   auto* max_coda_size = new Rule(
       "Coda may have at most 4 consonants",
+      RuleType::Coda,
       [](const std::vector<Phoneme*>& coda) { return coda.size() <= 4; });
 
   auto* max_nucleus_size = new Rule(
       "Nucleus may have at most 2 vowels",
+      RuleType::Nucleus,
       [](const std::vector<Phoneme*>& nucleus) { return nucleus.size() <= 2; });
 
   auto* three_consonant_onset_rule =
       new Rule("Three-consonant English onsets must start with s",
+               RuleType::Onset,
                [](const std::vector<Phoneme*>& onset) {
                  if (onset.size() != 3) return true;
                  return onset[0]->GetSymbol() == "s";
                });
 
-  auto* english_onset_ng_rule = new Rule(
-      "Syllables cannot begin with ng", [](const std::vector<Phoneme*>& onset) {
-        if (onset.empty()) return true;
-        return onset[0]->GetSymbol() != "ŋ";
-      });
+  auto* english_onset_ng_rule =
+      new Rule("Syllables cannot begin with ng",
+               RuleType::Onset,
+               [](const std::vector<Phoneme*>& onset) {
+                 if (onset.empty()) return true;
+                 return onset[0]->GetSymbol() != "ŋ";
+               });
 
   auto* coda_h_rule = new Rule("Syllables cannot end with h",
+                               RuleType::Coda,
                                [](const std::vector<Phoneme*>& coda) {
                                  if (coda.empty()) return true;
                                  return coda.back()->GetSymbol() != "h";
                                });
-
-  auto* no_empty_syllable_rule =
-      new Rule("Syllable cannot be completely empty",
-               [](const std::vector<Phoneme*>& part) { return !part.empty(); });
 
   English.AddRule(nucleus_exists);
   English.AddRule(nucleus_only_vowels);
@@ -158,6 +166,4 @@ int main() {
   English.AddRule(english_onset_ng_rule);
 
   English.AddRule(coda_h_rule);
-
-  
 }

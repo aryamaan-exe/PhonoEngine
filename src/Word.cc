@@ -10,3 +10,5 @@ std::string Word::Symbols() {
 
   return res;
 }
+
+std::vector<Syllable> Word::GetSyllables() { return syllables_; }

@@ -2,8 +2,10 @@
 
 class Word {
 public:
-    Word(const std::vector<Syllable>& syllables);
-    std::string Symbols();
+  Word(const std::vector<Syllable>& syllables);
+  std::vector<Syllable> GetSyllables();
+  std::string Symbols();
+
 private:
-    std::vector<Syllable> syllables_;
+  std::vector<Syllable> syllables_;
 };

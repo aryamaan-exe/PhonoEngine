@@ -11,11 +11,11 @@ public:
            const std::vector<Phoneme*>& nucleus,
            const std::vector<Phoneme*>& coda);
 
-  std::vector<Phoneme*> GetOnset();
-  std::vector<Phoneme*> GetNucleus();
-  std::vector<Phoneme*> GetCoda();
+  std::vector<Phoneme*> GetOnset() const;
+  std::vector<Phoneme*> GetNucleus() const;
+  std::vector<Phoneme*> GetCoda() const;
 
-  std::string Symbols();
+  std::string Symbols() const;
 
 private:
   std::vector<Phoneme*> onset_;

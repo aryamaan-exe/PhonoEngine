@@ -5,8 +5,8 @@
 
 #include "Phoneme.hpp"
 
-enum Height { High, Mid, Low };
-enum Backness { Front, Central, Back };
+enum class Height { High, Mid, Low };
+enum class Backness { Front, Central, Back };
 
 class Vowel : public Phoneme {
 public:

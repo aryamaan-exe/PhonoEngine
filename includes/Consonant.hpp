@@ -5,7 +5,7 @@
 
 #include "Phoneme.hpp"
 
-enum Place {
+enum class Place {
   Bilabial,
   Labiodental,
   Dental,
@@ -19,7 +19,7 @@ enum Place {
   Glottal
 };
 
-enum Manner { Plosive, Nasal, Trill, Tap, Fricative, Approximant };
+enum class Manner { Plosive, Nasal, Trill, Tap, Fricative, Approximant };
 
 class Consonant : public Phoneme {
 public:

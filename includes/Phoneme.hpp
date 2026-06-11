@@ -3,7 +3,7 @@
 
 #include <string>
 
-enum PhonemeType { kConsonant, kVowel };
+enum class PhonemeType { kConsonant, kVowel };
 
 class Phoneme {
 public:

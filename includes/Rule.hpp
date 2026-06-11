@@ -6,7 +6,7 @@
 
 #include "Phoneme.hpp"
 
-enum RuleType { Onset, Nucleus, Coda };
+enum class RuleType { Onset, Nucleus, Coda };
 
 class Rule {
 public:

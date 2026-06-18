@@ -18,8 +18,8 @@ int main() {
   std::vector<Phoneme*> c{r};
   std::vector<Phoneme*> e;
 
-  auto* bar = new Syllable(o, n, c);
-  auto* rb = new Syllable(c, e, o);
+  auto* bar = new Syllable{o, n, c};
+  auto* rb = new Syllable{c, e, o};
   std::cout << bar->Symbols() << std::endl;
 
   auto* rule = new Rule(
@@ -40,45 +40,68 @@ int main() {
 
   Language English;
 
-  English.AddPhoneme(new Consonant("p", Bilabial, Plosive, false));
-  English.AddPhoneme(new Consonant("b", Bilabial, Plosive, true));
-  English.AddPhoneme(new Consonant("t", Alveolar, Plosive, false));
-  English.AddPhoneme(new Consonant("d", Alveolar, Plosive, true));
-  English.AddPhoneme(new Consonant("k", Velar, Plosive, false));
-  English.AddPhoneme(new Consonant("g", Velar, Plosive, true));
+  English.AddPhoneme(
+      new Consonant("p", Place::Bilabial, Manner::Plosive, false));
+  English.AddPhoneme(
+      new Consonant("b", Place::Bilabial, Manner::Plosive, true));
+  English.AddPhoneme(
+      new Consonant("t", Place::Alveolar, Manner::Plosive, false));
+  English.AddPhoneme(
+      new Consonant("d", Place::Alveolar, Manner::Plosive, true));
+  English.AddPhoneme(new Consonant("k", Place::Velar, Manner::Plosive, false));
+  English.AddPhoneme(new Consonant("g", Place::Velar, Manner::Plosive, true));
 
-  English.AddPhoneme(new Consonant("m", Bilabial, Nasal, true));
-  English.AddPhoneme(new Consonant("n", Alveolar, Nasal, true));
-  English.AddPhoneme(new Consonant("ŋ", Velar, Nasal, true));
+  English.AddPhoneme(new Consonant("m", Place::Bilabial, Manner::Nasal, true));
+  English.AddPhoneme(new Consonant("n", Place::Alveolar, Manner::Nasal, true));
+  English.AddPhoneme(new Consonant("ŋ", Place::Velar, Manner::Nasal, true));
 
-  English.AddPhoneme(new Consonant("f", Labiodental, Fricative, false));
-  English.AddPhoneme(new Consonant("v", Labiodental, Fricative, true));
-  English.AddPhoneme(new Consonant("θ", Dental, Fricative, false));
-  English.AddPhoneme(new Consonant("ð", Dental, Fricative, true));
-  English.AddPhoneme(new Consonant("s", Alveolar, Fricative, false));
-  English.AddPhoneme(new Consonant("z", Alveolar, Fricative, true));
-  English.AddPhoneme(new Consonant("ʃ", Postalveolar, Fricative, false));
-  English.AddPhoneme(new Consonant("ʒ", Postalveolar, Fricative, true));
-  English.AddPhoneme(new Consonant("h", Glottal, Fricative, false));
+  English.AddPhoneme(
+      new Consonant("f", Place::Labiodental, Manner::Fricative, false));
+  English.AddPhoneme(
+      new Consonant("v", Place::Labiodental, Manner::Fricative, true));
+  English.AddPhoneme(
+      new Consonant("θ", Place::Dental, Manner::Fricative, false));
+  English.AddPhoneme(
+      new Consonant("ð", Place::Dental, Manner::Fricative, true));
+  English.AddPhoneme(
+      new Consonant("s", Place::Alveolar, Manner::Fricative, false));
+  English.AddPhoneme(
+      new Consonant("z", Place::Alveolar, Manner::Fricative, true));
+  English.AddPhoneme(
+      new Consonant("ʃ", Place::Postalveolar, Manner::Fricative, false));
+  English.AddPhoneme(
+      new Consonant("ʒ", Place::Postalveolar, Manner::Fricative, true));
+  English.AddPhoneme(
+      new Consonant("h", Place::Glottal, Manner::Fricative, false));
 
-  English.AddPhoneme(new Consonant("l", Alveolar, Approximant, true));
-  English.AddPhoneme(new Consonant("r", Alveolar, Approximant, true));
-  English.AddPhoneme(new Consonant("j", Palatal, Approximant, true));
-  English.AddPhoneme(new Consonant("w", Bilabial, Approximant, true));
+  English.AddPhoneme(
+      new Consonant("l", Place::Alveolar, Manner::Approximant, true));
+  English.AddPhoneme(
+      new Consonant("ɹ", Place::Alveolar, Manner::Approximant, true));
+  English.AddPhoneme(
+      new Consonant("j", Place::Palatal, Manner::Approximant, true));
+  English.AddPhoneme(
+      new Consonant("w", Place::Bilabial, Manner::Approximant, true));
 
-  English.AddPhoneme(new Vowel("i", High, Front, true, false));
-  English.AddPhoneme(new Vowel("ɪ", High, Front, false, false));
-  English.AddPhoneme(new Vowel("e", Mid, Front, true, false));
-  English.AddPhoneme(new Vowel("ɛ", Mid, Front, false, false));
-  English.AddPhoneme(new Vowel("æ", Low, Front, false, false));
+  English.AddPhoneme(
+      new Vowel("i", Height::High, Backness::Front, true, false));
+  English.AddPhoneme(
+      new Vowel("ɪ", Height::High, Backness::Front, false, false));
+  English.AddPhoneme(new Vowel("e", Height::Mid, Backness::Front, true, false));
+  English.AddPhoneme(
+      new Vowel("ɛ", Height::Mid, Backness::Front, false, false));
+  English.AddPhoneme(
+      new Vowel("æ", Height::Low, Backness::Front, false, false));
 
-  English.AddPhoneme(new Vowel("ə", Mid, Central, false, false));
-  English.AddPhoneme(new Vowel("ʌ", Mid, Central, false, false));
+  English.AddPhoneme(
+      new Vowel("ə", Height::Mid, Backness::Central, false, false));
+  English.AddPhoneme(
+      new Vowel("ʌ", Height::Mid, Backness::Central, false, false));
 
-  English.AddPhoneme(new Vowel("u", High, Back, true, true));
-  English.AddPhoneme(new Vowel("ʊ", High, Back, false, true));
-  English.AddPhoneme(new Vowel("ɔ", Mid, Back, false, true));
-  English.AddPhoneme(new Vowel("ɑ", Low, Back, false, false));
+  English.AddPhoneme(new Vowel("u", Height::High, Backness::Back, true, true));
+  English.AddPhoneme(new Vowel("ʊ", Height::High, Backness::Back, false, true));
+  English.AddPhoneme(new Vowel("ɔ", Height::Mid, Backness::Back, false, true));
+  English.AddPhoneme(new Vowel("ɑ", Height::Low, Backness::Back, false, false));
 
   auto* nucleus_exists = new Rule(
       "Nucleus must exist",
@@ -90,7 +113,7 @@ int main() {
                RuleType::Nucleus,
                [](const std::vector<Phoneme*>& nucleus) {
                  for (Phoneme* p : nucleus) {
-                   if (p->GetType() != kVowel) return false;
+                   if (p->GetType() != PhonemeType::kVowel) return false;
                  }
                  return true;
                });
@@ -100,20 +123,20 @@ int main() {
                RuleType::Onset,
                [](const std::vector<Phoneme*>& onset) {
                  for (Phoneme* p : onset) {
-                   if (p->GetType() != kConsonant) return false;
+                   if (p->GetType() != PhonemeType::kConsonant) return false;
                  }
                  return true;
                });
 
-  auto* coda_only_consonants = new Rule("Coda must contain only consonants",
-                                        RuleType::Coda,
-                                        [](const std::vector<Phoneme*>& coda) {
-                                          for (Phoneme* p : coda) {
-                                            if (p->GetType() != kConsonant)
-                                              return false;
-                                          }
-                                          return true;
-                                        });
+  auto* coda_only_consonants =
+      new Rule("Coda must contain only consonants",
+               RuleType::Coda,
+               [](const std::vector<Phoneme*>& coda) {
+                 for (Phoneme* p : coda) {
+                   if (p->GetType() != PhonemeType::kConsonant) return false;
+                 }
+                 return true;
+               });
 
   auto* max_onset_size = new Rule(
       "Onset may have at most 3 consonants",
@@ -166,4 +189,16 @@ int main() {
   English.AddRule(english_onset_ng_rule);
 
   English.AddRule(coda_h_rule);
+
+  try {
+    std::cout << English.Validate(*barcode) << std::endl;
+    auto* invalid = new Word({*rb, *code});
+    std::cout << English.Validate(*invalid) << std::endl;
+  } catch (const std::runtime_error& e) {
+    std::cout << e.what() << std::endl;
+  }
+
+  std::vector<std::string> w = {"b", ".", "ɑ", ".", "ɹ", "."};
+  Word from_symbol = English.BuildWordFromSymbols(w);
+  std::cout << from_symbol.Symbols() << std::endl;
 }

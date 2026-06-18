@@ -65,3 +65,13 @@ Abstract sound unit. Inherited by Consonant and Vowel.
 4) `std::vector<Phoneme*> GetCoda()`: Returns the coda.
 
 5) `std::string Symbols()`: String of characters (as defined by the consonant or vowel's constructor which is obtained from `Phoneme`'s `GetSymbol()` method) that make up the entire syllable.
+
+### Word
+
+**Functions:**
+
+1) `Word(const std::vector<Syllable>& syllables)`: Create a Word object from a vector of syllables.
+
+2) `std::vector<Syllable> GetSyllables()`: Retrieve a vector of syllables that make up the word.
+
+3) `std::string Symbols()`: Get the IPA/custom representation of the word.

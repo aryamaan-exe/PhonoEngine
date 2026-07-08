@@ -7,12 +7,12 @@ enum class PhonemeType { kConsonant, kVowel };
 
 class Phoneme {
 public:
-  Phoneme(std::string symbol, PhonemeType type);
-  std::string GetSymbol();
-  PhonemeType GetType();
+  Phoneme(wchar_t symbol, PhonemeType type);
+  wchar_t GetSymbol() const;
+  PhonemeType GetType() const;
 
 private:
-  std::string symbol_;
+  wchar_t symbol_;
   PhonemeType type_;
 };
 

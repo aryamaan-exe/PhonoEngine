@@ -2,9 +2,9 @@
 
 Word::Word(const std::vector<Syllable>& syllables): syllables_(syllables) {}
 
-std::string Word::Symbols() {
-  std::string res;
-  for (Syllable s : syllables_) {
+std::wstring Word::Symbols() {
+  std::wstring res;
+  for (const Syllable& s : syllables_) {
     res += s.Symbols();
   }
 

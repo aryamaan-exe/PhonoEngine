@@ -10,13 +10,13 @@ enum class Backness { Front, Central, Back };
 
 class Vowel : public Phoneme {
 public:
-  Vowel(std::string symbol,
+  Vowel(wchar_t symbol,
         Height height,
         Backness backness,
         bool tenseness,
         bool roundedness);
-  Height GetHeight();
-  Backness GetBackness();
+  Height GetHeight() const;
+  Backness GetBackness() const;
   bool GetTenseness() const;
   bool GetRoundedness() const;
 

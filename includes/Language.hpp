@@ -11,12 +11,12 @@ public:
   void AddPhoneme(Phoneme* phoneme);
   void AddRule(const Rule* rule);
   bool Validate(Word word);
-  Word BuildWordFromSymbols(std::vector<std::string>& word);
-  Phoneme GetPhonemeFromSymbol(std::string& symbol);
+  Word BuildWordFromSymbols(std::vector<wchar_t>& word);
+  Phoneme GetPhonemeFromSymbol(wchar_t symbol);
 
 private:
   std::vector<Phoneme> inventory_;
-  std::unordered_map<std::string, Phoneme> symbols_;
+  std::unordered_map<wchar_t, Phoneme> symbols_;
   std::vector<Rule> rules_;
 };
 

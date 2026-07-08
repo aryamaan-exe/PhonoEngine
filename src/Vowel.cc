@@ -2,7 +2,7 @@
 
 #include "Phoneme.hpp"
 
-Vowel::Vowel(std::string symbol,
+Vowel::Vowel(wchar_t symbol,
              Height height,
              Backness backness,
              bool tenseness,
@@ -13,9 +13,9 @@ Vowel::Vowel(std::string symbol,
     tense_(tenseness),
     rounded_(roundedness) {}
 
-Height Vowel::GetHeight() { return height_; }
+Height Vowel::GetHeight() const { return height_; }
 
-Backness Vowel::GetBackness() { return backness_; }
+Backness Vowel::GetBackness() const { return backness_; }
 
 bool Vowel::GetTenseness() const { return tense_; }
 

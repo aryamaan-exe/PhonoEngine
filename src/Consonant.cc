@@ -2,7 +2,7 @@
 
 #include "Phoneme.hpp"
 
-Consonant::Consonant(std::string symbol,
+Consonant::Consonant(wchar_t symbol,
                      Place place,
                      Manner manner,
                      bool voicing):
@@ -11,8 +11,8 @@ Consonant::Consonant(std::string symbol,
     manner_(manner),
     voiced_(voicing) {}
 
-Place Consonant::GetPlace() { return place_; }
+Place Consonant::GetPlace() const { return place_; }
 
-Manner Consonant::GetManner() { return manner_; }
+Manner Consonant::GetManner() const { return manner_; }
 
-bool Consonant::Voiced() { return voiced_; }
+bool Consonant::Voiced() const { return voiced_; }

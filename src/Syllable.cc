@@ -11,8 +11,8 @@ std::vector<Phoneme*> Syllable::GetNucleus() const { return nucleus_; }
 
 std::vector<Phoneme*> Syllable::GetCoda() const { return coda_; }
 
-std::string Syllable::Symbols() const {
-  std::string res;
+std::wstring Syllable::Symbols() const {
+  std::wstring res;
   for (Phoneme* p : onset_) {
     res += p->GetSymbol();
   }

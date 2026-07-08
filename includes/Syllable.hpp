@@ -15,7 +15,7 @@ public:
   std::vector<Phoneme*> GetNucleus() const;
   std::vector<Phoneme*> GetCoda() const;
 
-  std::string Symbols() const;
+  std::wstring Symbols() const;
 
 private:
   std::vector<Phoneme*> onset_;

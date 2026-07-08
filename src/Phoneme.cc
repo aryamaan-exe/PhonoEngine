@@ -1,8 +1,8 @@
 #include "Phoneme.hpp"
 
-Phoneme::Phoneme(std::string symbol, PhonemeType type):
+Phoneme::Phoneme(wchar_t symbol, PhonemeType type):
     symbol_(symbol), type_(type) {}
 
-std::string Phoneme::GetSymbol() { return symbol_; }
+wchar_t Phoneme::GetSymbol() const { return symbol_; }
 
-PhonemeType Phoneme::GetType() { return type_; }
+PhonemeType Phoneme::GetType() const { return type_; }

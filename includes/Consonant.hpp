@@ -23,10 +23,10 @@ enum class Manner { Plosive, Nasal, Trill, Tap, Fricative, Approximant };
 
 class Consonant : public Phoneme {
 public:
-  Consonant(std::string symbol, Place place, Manner manner, bool voiced);
-  Place GetPlace();
-  Manner GetManner();
-  bool Voiced();
+  Consonant(wchar_t symbol, Place place, Manner manner, bool voiced);
+  Place GetPlace() const;
+  Manner GetManner() const;
+  bool Voiced() const;
 
 private:
   Place place_;

@@ -1,15 +1,15 @@
 #include "Syllable.hpp"
 
-Syllable::Syllable(const std::vector<Phoneme*>& onset,
-                   const std::vector<Phoneme*>& nucleus,
-                   const std::vector<Phoneme*>& coda):
+Syllable::Syllable(const SyllablePart& onset,
+                   const SyllablePart& nucleus,
+                   const SyllablePart& coda):
     onset_(onset), nucleus_(nucleus), coda_(coda) {}
 
-std::vector<Phoneme*> Syllable::GetOnset() const { return onset_; }
+SyllablePart Syllable::GetOnset() const { return onset_; }
 
-std::vector<Phoneme*> Syllable::GetNucleus() const { return nucleus_; }
+SyllablePart Syllable::GetNucleus() const { return nucleus_; }
 
-std::vector<Phoneme*> Syllable::GetCoda() const { return coda_; }
+SyllablePart Syllable::GetCoda() const { return coda_; }
 
 std::wstring Syllable::Symbols() const {
   std::wstring res;

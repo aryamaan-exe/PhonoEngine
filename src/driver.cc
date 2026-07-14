@@ -22,7 +22,7 @@ int main() {
 
   auto* bar = new Syllable{o, n, c};
   auto* rb = new Syllable{c, e, o};
-  std::cout << bar->Symbols() << std::endl;
+  std::wcout << bar->Symbols() << std::endl;
 
   auto* rule = new Rule(
       "Nucleus must exist",
@@ -38,7 +38,7 @@ int main() {
        new Vowel(L'ʊ', Height::High, Backness::Front, false, true)},
       {new Consonant('d', Place::Alveolar, Manner::Plosive, true)});
   auto* barcode = new Word({*bar, *code});
-  std::cout << barcode->Symbols() << std::endl;
+  std::wcout << barcode->Symbols() << std::endl;
 
   Language English;
 
@@ -201,7 +201,7 @@ int main() {
 
   std::vector<wchar_t> w = {'b', '.', L'ɑ', '.', L'ɹ', '.'};
   Word from_symbol = English.BuildWordFromSymbols(w);
-  std::cout << from_symbol.Symbols() << std::endl;
+  std::wcout << from_symbol.Symbols() << std::endl;
 
   /*
   std::ifstream dict("cmudict.dict");

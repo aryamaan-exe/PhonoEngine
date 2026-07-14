@@ -3,16 +3,18 @@
 
 #include <string>
 
+using Symbol = wchar_t;
+
 enum class PhonemeType { kConsonant, kVowel };
 
 class Phoneme {
 public:
-  Phoneme(wchar_t symbol, PhonemeType type);
-  wchar_t GetSymbol() const;
+  Phoneme(Symbol symbol, PhonemeType type);
+  Symbol GetSymbol() const;
   PhonemeType GetType() const;
 
 private:
-  wchar_t symbol_;
+  Symbol symbol_;
   PhonemeType type_;
 };
 

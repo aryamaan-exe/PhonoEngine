@@ -5,22 +5,24 @@
 
 #include "Phoneme.hpp"
 
+using SyllablePart = std::vector<Phoneme*>;
+
 class Syllable {
 public:
-  Syllable(const std::vector<Phoneme*>& onset,
-           const std::vector<Phoneme*>& nucleus,
-           const std::vector<Phoneme*>& coda);
+  Syllable(const SyllablePart& onset,
+           const SyllablePart& nucleus,
+           const SyllablePart& coda);
 
-  std::vector<Phoneme*> GetOnset() const;
-  std::vector<Phoneme*> GetNucleus() const;
-  std::vector<Phoneme*> GetCoda() const;
+  SyllablePart GetOnset() const;
+  SyllablePart GetNucleus() const;
+  SyllablePart GetCoda() const;
 
   std::wstring Symbols() const;
 
 private:
-  std::vector<Phoneme*> onset_;
-  std::vector<Phoneme*> nucleus_;
-  std::vector<Phoneme*> coda_;
+  SyllablePart onset_;
+  SyllablePart nucleus_;
+  SyllablePart coda_;
 };
 
 #endif

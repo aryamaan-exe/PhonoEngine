@@ -10,7 +10,7 @@ enum class Backness { Front, Central, Back };
 
 class Vowel : public Phoneme {
 public:
-  Vowel(wchar_t symbol,
+  Vowel(Symbol symbol,
         Height height,
         Backness backness,
         bool tenseness,

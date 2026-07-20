@@ -17,3 +17,4 @@ src/%.o: src/%.cc
 
 clean:
 	rm -rf bin/*
+	rm -rf src/*.o

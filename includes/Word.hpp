@@ -6,11 +6,14 @@
 class Word {
 public:
   Word(const std::vector<Syllable>& syllables);
+  Word(const std::string& spelling, const std::vector<Syllable>& syllables);
+  std::string GetSpelling();
   std::vector<Syllable> GetSyllables();
   std::wstring Symbols();
 
 private:
   std::vector<Syllable> syllables_;
+  std::string spelling_;
 };
 
 #endif

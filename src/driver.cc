@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <thread>
 #include <vector>
 
@@ -9,6 +10,16 @@
 #include "Syllable.hpp"
 #include "Vowel.hpp"
 #include "Word.hpp"
+
+std::vector<std::string> Split(const std::string& s) {
+  std::istringstream iss{s};
+  std::vector<std::string> tokens;
+  std::string token;
+  while (iss >> token) {
+    tokens.push_back(token);
+  }
+  return tokens;
+}
 
 int main() {
   auto* b = new Consonant('b', Place::Bilabial, Manner::Plosive, true);
@@ -100,9 +111,11 @@ int main() {
       new Vowel(L'ʌ', Height::Mid, Backness::Central, false, false));
 
   English.AddPhoneme(new Vowel('u', Height::High, Backness::Back, true, true));
-  English.AddPhoneme(new Vowel(L'ʊ', Height::High, Backness::Back, false, true));
+  English.AddPhoneme(
+      new Vowel(L'ʊ', Height::High, Backness::Back, false, true));
   English.AddPhoneme(new Vowel(L'ɔ', Height::Mid, Backness::Back, false, true));
-  English.AddPhoneme(new Vowel(L'ɑ', Height::Low, Backness::Back, false, false));
+  English.AddPhoneme(
+      new Vowel(L'ɑ', Height::Low, Backness::Back, false, false));
 
   auto* nucleus_exists = new Rule(
       "Nucleus must exist",
@@ -203,20 +216,38 @@ int main() {
   Word from_symbol = English.BuildWordFromSymbols(w);
   std::wcout << from_symbol.Symbols() << std::endl;
 
-  /*
-  std::ifstream dict("cmudict.dict");
+  std::ifstream dict{"cmudict.dict"};
   if (!dict) throw std::runtime_error("Could not open file");
 
-  size_t n_threads = std::thread::hardware_concurrency();
-  std::vector<std::thread> threads;
-
   std::vector<std::string> lines;
-  auto worker = [&](size_t id) {
-    size_t n_lines = lines.size();
+  std::string line;
+  while (std::getline(dict, line)) {
+    lines.push_back(std::move(line));
+  }
 
-    for (size_t i{}; i < n_lines; i += n_threads) {
+  const size_t kThreadCount{std::thread::hardware_concurrency()};
+  std::vector<std::thread> threads;
+  std::vector<bool> result;
+  size_t valid{};
+  const size_t kChunkSize{(lines.size() + kThreadCount - 1) / kThreadCount};
 
-    }
-  };
-  */
+  for (size_t t{}; t < kThreadCount; ++t) {
+    size_t begin{t * kChunkSize};
+    size_t end{std::min(begin + kChunkSize, lines.size())};
+
+    if (begin >= end) continue;
+
+    threads.emplace_back([&, begin, end, t] {
+      for (size_t j{begin}; j < end; ++j) {
+        std::vector<std::string> tokens = Split(lines.at(j));
+        std::vector<Syllable> syllables;
+        Word w{tokens.at(0), syllables};
+        bool is_valid = English.Validate(w);
+        if (is_valid) ++valid;
+        result.push_back(is_valid);
+      }
+    });
+  }
+
+  for (auto& thread : threads) thread.join();
 }

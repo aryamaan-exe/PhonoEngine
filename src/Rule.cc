@@ -1,14 +1,14 @@
 #include "Rule.hpp"
 
-Rule::Rule(const std::string& name,
+Rule::Rule(const std::wstring& name,
            RuleType type,
            const std::function<bool(const std::vector<Phoneme*>&)>& condition):
     name_(name), type_(type), condition_(condition) {}
 
-bool Rule::IsValid(const std::vector<Phoneme*>& syllable_part) {
+bool Rule::IsValid(const std::vector<Phoneme*>& syllable_part) const {
   return condition_(syllable_part);
 }
 
-RuleType Rule::GetType() { return type_; }
+RuleType Rule::GetType() const { return type_; }
 
-std::string Rule::GetName() { return name_; }
+std::wstring Rule::GetName() const { return name_; }

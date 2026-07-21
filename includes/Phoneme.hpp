@@ -3,7 +3,7 @@
 
 #include <string>
 
-using Symbol = wchar_t;
+using Symbol = std::wstring;
 
 enum class PhonemeType { kConsonant, kVowel };
 

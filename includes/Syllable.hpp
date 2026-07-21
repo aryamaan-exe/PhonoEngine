@@ -17,7 +17,9 @@ public:
   SyllablePart GetNucleus() const;
   SyllablePart GetCoda() const;
 
-  std::wstring Symbols() const;
+  Symbol Symbols() const;
+
+  static std::vector<Syllable> GetSyllablesFromTokens(const std::vector<std::string>& tokens);
 
 private:
   SyllablePart onset_;

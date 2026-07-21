@@ -9,11 +9,11 @@ public:
   Word(const std::string& spelling, const std::vector<Syllable>& syllables);
   std::string GetSpelling();
   std::vector<Syllable> GetSyllables();
-  std::wstring Symbols();
+  std::wstring Symbols() const;
 
 private:
-  std::vector<Syllable> syllables_;
   std::string spelling_;
+  std::vector<Syllable> syllables_;
 };
 
 #endif

@@ -10,18 +10,18 @@ enum class RuleType { Onset, Nucleus, Coda };
 
 class Rule {
 public:
-  Rule(const std::string& name,
+  Rule(const std::wstring& name,
        RuleType type,
        const std::function<bool(const std::vector<Phoneme*>&)>& condition);
 
-  bool IsValid(const std::vector<Phoneme*>& syllable_part);
+  bool IsValid(const std::vector<Phoneme*>& syllable_part) const;
 
-  RuleType GetType();
+  RuleType GetType() const;
 
-  std::string GetName();
+  std::wstring GetName() const;
 
 private:
-  std::string name_;
+  std::wstring name_;
   RuleType type_;
   std::function<bool(const std::vector<Phoneme*>&)> condition_;
 };

@@ -19,11 +19,19 @@ enum class Place {
   Glottal
 };
 
-enum class Manner { Plosive, Nasal, Trill, Tap, Fricative, Approximant };
+enum class Manner {
+  Plosive,
+  Nasal,
+  Trill,
+  Tap,
+  Fricative,
+  Approximant,
+  Affricate
+};
 
 class Consonant : public Phoneme {
 public:
-  Consonant(wchar_t symbol, Place place, Manner manner, bool voiced);
+  Consonant(Symbol symbol, Place place, Manner manner, bool voiced);
   Place GetPlace() const;
   Manner GetManner() const;
   bool Voiced() const;

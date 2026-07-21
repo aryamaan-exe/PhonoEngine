@@ -11,7 +11,7 @@ SyllablePart Syllable::GetNucleus() const { return nucleus_; }
 
 SyllablePart Syllable::GetCoda() const { return coda_; }
 
-std::wstring Syllable::Symbols() const {
+Symbol Syllable::Symbols() const {
   std::wstring res;
   for (Phoneme* p : onset_) {
     res += p->GetSymbol();
@@ -24,4 +24,10 @@ std::wstring Syllable::Symbols() const {
   }
 
   return res;
+}
+
+std::vector<Syllable> Syllable::GetSyllablesFromTokens(const std::vector<std::string>& tokens) {
+  std::vector<Syllable> result;
+
+
 }

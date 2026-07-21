@@ -2,12 +2,12 @@
 
 #include "Phoneme.hpp"
 
-Vowel::Vowel(wchar_t symbol,
+Vowel::Vowel(Symbol symbol,
              Height height,
              Backness backness,
              bool tenseness,
              bool roundedness):
-    Phoneme(symbol, PhonemeType::kVowel),
+    Phoneme(std::move(symbol), PhonemeType::kVowel),
     height_(height),
     backness_(backness),
     tense_(tenseness),

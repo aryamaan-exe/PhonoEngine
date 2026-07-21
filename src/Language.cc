@@ -37,8 +37,7 @@ bool Language::Validate(Word word) {
       }();
 
       if (!rule.IsValid(segment)) {
-        throw std::runtime_error(
-            std::format("{} is invalid: {}", word.Symbols(), rule.GetName()));
+        throw std::format(L"{} is invalid: {}", word.Symbols(), rule.GetName());
       }
     }
   }
@@ -46,7 +45,7 @@ bool Language::Validate(Word word) {
   return true;
 }
 
-Phoneme Language::GetPhonemeFromSymbol(wchar_t symbol) {
+Phoneme Language::GetPhonemeFromSymbol(Symbol symbol) {
   if (!symbols_.contains(symbol)) {
     throw std::format(L"The symbol '{}' was not found in phonemic inventory.",
                       symbol);
@@ -55,7 +54,7 @@ Phoneme Language::GetPhonemeFromSymbol(wchar_t symbol) {
   return symbols_.at(symbol);
 }
 
-Word Language::BuildWordFromSymbols(std::vector<wchar_t>& word) {
+Word Language::BuildWordFromSymbols(std::vector<Symbol>& word) {
   std::vector<Syllable> syllables;
   std::vector<Phoneme*> onset;
   std::vector<Phoneme*> nucleus;
@@ -63,7 +62,7 @@ Word Language::BuildWordFromSymbols(std::vector<wchar_t>& word) {
   std::vector<Phoneme*>* curr{&onset};
   short it = -1;
   for (const auto& c : word) {
-    if (c == '.') {
+    if (c == L".") {
       ++it;
       it %= 3;
       switch (it) {

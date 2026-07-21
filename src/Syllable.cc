@@ -26,8 +26,8 @@ Symbol Syllable::Symbols() const {
   return res;
 }
 
-std::vector<Syllable> Syllable::GetSyllablesFromTokens(const std::vector<std::string>& tokens) {
+std::vector<Syllable> Syllable::GetSyllablesFromTokens([[maybe_unused]] const std::vector<std::string>& tokens) {
   std::vector<Syllable> result;
 
-
+  return result;
 }

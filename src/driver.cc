@@ -62,10 +62,10 @@ constexpr Symbol Lookup(std::string_view key) {
   return it != kPhoneticMap.end() ? it->second : L"\0";
 }
 
-std::vector<std::string> Split(const std::string& s) {
-  std::istringstream iss{s};
-  std::vector<std::string> tokens;
-  std::string token;
+std::vector<std::wstring> Split(const std::wstring& s) {
+  std::wistringstream iss{s};
+  std::vector<std::wstring> tokens;
+  std::wstring token;
   while (iss >> token) {
     tokens.push_back(token);
   }
@@ -235,40 +235,32 @@ int main() {
 
   English.AddRule(coda_h_rule);
 
-  std::ifstream dict{"cmudict.dict"};
+  std::wifstream dict{"cmudict.dict"};
   if (!dict) throw std::runtime_error("Could not open file");
 
-  std::vector<std::string> lines;
-  std::string line;
+  std::vector<std::wstring> lines;
+  std::wstring line;
   while (std::getline(dict, line)) {
     lines.push_back(std::move(line));
   }
 
-  const size_t kThreadCount{std::thread::hardware_concurrency()};
-  std::vector<std::thread> threads;
-  std::vector<bool> result;
-  size_t valid{};
-  const size_t kChunkSize{(lines.size() + kThreadCount - 1) / kThreadCount};
+  // const size_t kThreadCount{std::thread::hardware_concurrency()};
+  // std::vector<std::jthread> threads;
+  // const size_t kChunkSize{(lines.size() + kThreadCount - 1) / kThreadCount};
+	// std::vector<std::wstring> invalid;
 
-  for (size_t t{}; t < kThreadCount; ++t) {
-    size_t begin{t * kChunkSize};
-    size_t end{std::min(begin + kChunkSize, lines.size())};
+  // for (size_t t{}; t < kThreadCount; ++t) {
+  //   size_t begin{t * kChunkSize};
+  //   size_t end{std::min(begin + kChunkSize, lines.size())};
 
-    if (begin >= end) continue;
+  //   if (begin >= end) continue;
 
-    threads.emplace_back([&, begin, end] {
-      for (size_t j{begin}; j < end; ++j) {
-        std::vector<std::string> tokens = Split(lines.at(j));
-        std::vector<Syllable> syllables = Syllable::GetSyllablesFromTokens(tokens);
-        Word w{tokens.at(0), syllables};
-        bool is_valid = English.Validate(w);
-        if (is_valid) ++valid;
-        result.push_back(is_valid);
-      }
-    });
-  }
-
-  for (auto& thread : threads) thread.join();
-
-	std::cout << valid / lines.size();
+  //   threads.emplace_back([&, begin, end] {
+  //     for (size_t j{begin}; j < end; ++j) {
+  //       const std::vector<std::wstring> tokens{Split(lines.at(j))};
+  //       std::vector<Syllable> syllables{English.GetSyllablesFromTokens(tokens)};
+  //       Word w{syllables};
+  //     }
+  //   });
+  // }
 }

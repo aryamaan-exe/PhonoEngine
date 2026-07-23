@@ -19,7 +19,6 @@ public:
 
   Symbol Symbols() const;
 
-  static std::vector<Syllable> GetSyllablesFromTokens(const std::vector<std::string>& tokens);
 
 private:
   SyllablePart onset_;

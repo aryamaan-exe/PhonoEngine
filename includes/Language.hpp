@@ -13,7 +13,7 @@ public:
   bool Validate(Word word);
   Word BuildWordFromSymbols(std::vector<Symbol>& word);
   Phoneme GetPhonemeFromSymbol(Symbol symbol);
-
+  std::vector<Syllable> GetSyllablesFromTokens(const std::vector<std::wstring>& tokens);
 private:
   std::vector<Phoneme> inventory_;
   std::unordered_map<Symbol, Phoneme> symbols_;

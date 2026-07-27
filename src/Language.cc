@@ -16,7 +16,7 @@ void Language::AddPhoneme(std::unique_ptr<Phoneme> phoneme) {
 
 void Language::AddRule(Rule* rule) { rules_.push_back(rule); }
 
-bool Language::Validate(Word word) {
+ValidationResult Language::Validate(Word word) {
   std::vector<Syllable> syllables = word.GetSyllables();
 
   for (const Syllable& syllable : syllables) {
@@ -39,12 +39,12 @@ bool Language::Validate(Word word) {
       }();
 
       if (!rule->IsValid(segment)) {
-        throw std::format(L"{} is invalid: {}", word.Symbols(), rule->GetName());
+        return {false, rule->GetName()};
       }
     }
   }
 
-  return true;
+  return {true, L""};
 }
 
 Phoneme* Language::GetPhonemeFromSymbol(Symbol symbol) {

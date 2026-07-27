@@ -6,7 +6,7 @@
 class Word {
 public:
   Word(const std::vector<Syllable>& syllables);
-  std::vector<Syllable> GetSyllables();
+  std::vector<Syllable> GetSyllables() const;
   Symbol Symbols() const;
 
 private:

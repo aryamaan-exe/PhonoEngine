@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Phoneme.hpp"
+#include "Syllable.hpp"
 
 enum class RuleType { Onset, Nucleus, Coda };
 
@@ -12,9 +13,9 @@ class Rule {
 public:
   Rule(const std::wstring& name,
        RuleType type,
-       const std::function<bool(const std::vector<Phoneme*>&)>& condition);
+       const std::function<bool(const SyllablePart&)>& condition);
 
-  bool IsValid(const std::vector<Phoneme*>& syllable_part) const;
+  bool IsValid(const SyllablePart& syllable_part) const;
 
   RuleType GetType() const;
 
@@ -23,7 +24,7 @@ public:
 private:
   std::wstring name_;
   RuleType type_;
-  std::function<bool(const std::vector<Phoneme*>&)> condition_;
+  std::function<bool(const SyllablePart&)> condition_;
 };
 
 #endif

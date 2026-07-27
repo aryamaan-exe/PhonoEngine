@@ -10,6 +10,8 @@ enum class PhonemeType { kConsonant, kVowel };
 class Phoneme {
 public:
   Phoneme(Symbol symbol, PhonemeType type);
+  virtual ~Phoneme() = default;
+  
   Symbol GetSymbol() const;
   PhonemeType GetType() const;
 

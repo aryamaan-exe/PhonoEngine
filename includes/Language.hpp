@@ -6,18 +6,20 @@
 #include "Rule.hpp"
 #include "Word.hpp"
 
+using Inventory = std::vector<std::unique_ptr<Phoneme>>;
+
 class Language {
 public:
-  void AddPhoneme(Phoneme* phoneme);
-  void AddRule(const Rule* rule);
+  void AddPhoneme(std::unique_ptr<Phoneme> phoneme);
+  void AddRule(Rule* rule);
   bool Validate(Word word);
   Word BuildWordFromSymbols(std::vector<Symbol>& word);
-  Phoneme GetPhonemeFromSymbol(Symbol symbol);
+  Phoneme* GetPhonemeFromSymbol(Symbol symbol);
   std::vector<Syllable> GetSyllablesFromTokens(const std::vector<std::wstring>& tokens);
 private:
-  std::vector<Phoneme> inventory_;
-  std::unordered_map<Symbol, Phoneme> symbols_;
-  std::vector<Rule> rules_;
+  Inventory inventory_;
+  std::unordered_map<Symbol, Phoneme*> symbols_;
+  std::vector<Rule*> rules_;
 };
 
 #endif

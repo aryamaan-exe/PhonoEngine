@@ -56,13 +56,13 @@ Abstract sound unit. Inherited by Consonant and Vowel.
 
 **Functions:**
 
-1) `Syllable(std::vector<Phoneme*>& onset, std::vector<Phoneme*>& nucleus, std::vector<Phoneme*>& coda)`: Constructor. Initializes the onset, nucleus, and coda as a `std::vector` of pointers to phonemes.
+1) `Syllable(SyllablePart& onset, SyllablePart& nucleus, SyllablePart& coda)`: Constructor. Initializes the onset, nucleus, and coda as a `std::vector` of pointers to phonemes.
 
-2) `std::vector<Phoneme*> GetOnset()`: Returns the onset.
+2) `SyllablePart GetOnset()`: Returns the onset.
 
-3) `std::vector<Phoneme*> GetNucleus()`: Returns the nucleus.
+3) `SyllablePart GetNucleus()`: Returns the nucleus.
 
-4) `std::vector<Phoneme*> GetCoda()`: Returns the coda.
+4) `SyllablePart GetCoda()`: Returns the coda.
 
 5) `std::string Symbols()`: String of characters (as defined by the consonant or vowel's constructor which is obtained from `Phoneme`'s `GetSymbol()` method) that make up the entire syllable.
 

@@ -3,7 +3,7 @@
 Syllable::Syllable(const SyllablePart& onset,
                    const SyllablePart& nucleus,
                    const SyllablePart& coda):
-    onset_(onset), nucleus_(nucleus), coda_(coda) {}
+    onset_(std::move(onset)), nucleus_(std::move(nucleus)), coda_(std::move(coda)) {}
 
 SyllablePart Syllable::GetOnset() const { return onset_; }
 
@@ -13,13 +13,13 @@ SyllablePart Syllable::GetCoda() const { return coda_; }
 
 Symbol Syllable::Symbols() const {
   std::wstring res;
-  for (Phoneme* p : onset_) {
+  for (const auto& p : onset_) {
     res += p->GetSymbol();
   }
-  for (Phoneme* p : nucleus_) {
+  for (const auto& p : nucleus_) {
     res += p->GetSymbol();
   }
-  for (Phoneme* p : coda_) {
+  for (const auto& p : coda_) {
     res += p->GetSymbol();
   }
 

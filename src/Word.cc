@@ -11,4 +11,4 @@ Symbol Word::Symbols() const {
   return res;
 }
 
-std::vector<Syllable> Word::GetSyllables() { return syllables_; }
+std::vector<Syllable> Word::GetSyllables() const { return syllables_; }

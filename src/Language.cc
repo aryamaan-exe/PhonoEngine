@@ -7,12 +7,14 @@
 #include "Rule.hpp"
 #include "Syllable.hpp"
 
-void Language::AddPhoneme(Phoneme* phoneme) {
-  inventory_.push_back(*phoneme);
-  symbols_.insert({phoneme->GetSymbol(), *phoneme});
+void Language::AddPhoneme(std::unique_ptr<Phoneme> phoneme) {
+  Symbol symbol = phoneme->GetSymbol();
+  Phoneme* raw = phoneme.get();
+  inventory_.push_back(std::move(phoneme));
+  symbols_.insert({symbol, raw});
 }
 
-void Language::AddRule(const Rule* rule) { rules_.push_back(*rule); }
+void Language::AddRule(Rule* rule) { rules_.push_back(rule); }
 
 bool Language::Validate(Word word) {
   std::vector<Syllable> syllables = word.GetSyllables();
@@ -22,10 +24,10 @@ bool Language::Validate(Word word) {
     SyllablePart nucleus = syllable.GetNucleus();
     SyllablePart coda = syllable.GetCoda();
 
-    for (Rule& rule : rules_) {
+    for (auto& rule : rules_) {
       const auto& segment =
-          [&rule, &onset, &nucleus, &coda]() -> const std::vector<Phoneme*>& {
-        switch (rule.GetType()) {
+          [&rule, &onset, &nucleus, &coda]() -> const SyllablePart& {
+        switch (rule->GetType()) {
         case RuleType::Onset:
           return onset;
         case RuleType::Nucleus:
@@ -36,8 +38,8 @@ bool Language::Validate(Word word) {
         throw std::logic_error("Invalid rule type");
       }();
 
-      if (!rule.IsValid(segment)) {
-        throw std::format(L"{} is invalid: {}", word.Symbols(), rule.GetName());
+      if (!rule->IsValid(segment)) {
+        throw std::format(L"{} is invalid: {}", word.Symbols(), rule->GetName());
       }
     }
   }
@@ -45,13 +47,12 @@ bool Language::Validate(Word word) {
   return true;
 }
 
-Phoneme Language::GetPhonemeFromSymbol(Symbol symbol) {
-  if (!symbols_.contains(symbol)) {
-    throw std::format(L"The symbol '{}' was not found in phonemic inventory.",
-                      symbol);
+Phoneme* Language::GetPhonemeFromSymbol(Symbol symbol) {
+  auto it = symbols_.find(symbol);
+  if (it == symbols_.end()) {
+    throw std::runtime_error("Symbol not found in phonemic inventory");
   }
-
-  return symbols_.at(symbol);
+  return it->second;
 }
 
 Word Language::BuildWordFromSymbols(std::vector<Symbol>& word) {
@@ -86,7 +87,8 @@ Word Language::BuildWordFromSymbols(std::vector<Symbol>& word) {
             L"The symbol '{}' was not found in phonemic inventory.", c);
       }
 
-      curr->push_back(&symbols_.at(c));
+      auto* phoneme = symbols_.at(c);
+      curr->push_back(phoneme);
     }
   }
   Word result{syllables};
@@ -97,20 +99,20 @@ std::vector<Syllable> Language::GetSyllablesFromTokens(const std::vector<std::ws
   std::vector<Syllable> result;
 
   SyllablePart onset, nucleus, coda;
-  SyllablePart* syllable_part;
+  SyllablePart* syllable_part{&onset};
   RuleType current_part{RuleType::Onset};
 
   for (size_t i{1}; i < tokens.size(); ++i) {
     std::wstring tok{tokens.at(i)};
     if (tok == L"#") break;
 
-    Phoneme p{GetPhonemeFromSymbol(tok)};
-    syllable_part->push_back(&p);
+    auto* p{GetPhonemeFromSymbol(tok)};
+    syllable_part->push_back(p);
     
-    for (Rule& rule : rules_) {
-      if (rule.GetType() != current_part) continue;
+    for (auto& rule : rules_) {
+      if (rule->GetType() != current_part) continue;
 
-      if (!rule.IsValid(*syllable_part) && syllable_part->empty()) {
+      if (!rule->IsValid(*syllable_part) && syllable_part->empty()) {
         syllable_part->pop_back();
         
         switch (current_part) {
@@ -124,7 +126,7 @@ std::vector<Syllable> Language::GetSyllablesFromTokens(const std::vector<std::ws
             break;
           case RuleType::Coda:
             current_part = RuleType::Onset;
-            syllable_part = &coda;
+            syllable_part = &onset;
             result.emplace_back(onset, nucleus, coda);
             onset.clear();
             nucleus.clear();

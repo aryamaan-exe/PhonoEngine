@@ -16,6 +16,10 @@ void Language::AddPhoneme(std::unique_ptr<Phoneme> phoneme) {
 
 void Language::AddRule(Rule* rule) { rules_.push_back(rule); }
 
+void Language::SetTokenConverter(TokenConverter converter) {
+  converter_ = std::move(converter);
+}
+
 ValidationResult Language::Validate(Word word) {
   std::vector<Syllable> syllables = word.GetSyllables();
 
@@ -47,7 +51,7 @@ ValidationResult Language::Validate(Word word) {
   return {true, L""};
 }
 
-Phoneme* Language::GetPhonemeFromSymbol(Symbol symbol) {
+Phoneme* Language::GetPhonemeFromSymbol(const Symbol& symbol) {
   auto it = symbols_.find(symbol);
   if (it == symbols_.end()) {
     throw std::runtime_error("Symbol not found in phonemic inventory");
@@ -95,7 +99,8 @@ Word Language::BuildWordFromSymbols(std::vector<Symbol>& word) {
   return result;
 }
 
-std::vector<Syllable> Language::GetSyllablesFromTokens(const std::vector<std::wstring>& tokens) {
+std::vector<Syllable> Language::GetSyllablesFromTokens(
+    const std::vector<std::wstring>& tokens) {
   std::vector<Syllable> result;
 
   SyllablePart onset, nucleus, coda;
@@ -103,38 +108,44 @@ std::vector<Syllable> Language::GetSyllablesFromTokens(const std::vector<std::ws
   RuleType current_part{RuleType::Onset};
 
   for (size_t i{1}; i < tokens.size(); ++i) {
-    std::wstring tok{tokens.at(i)};
+    const std::wstring& tok{tokens.at(i)};
     if (tok == L"#") break;
 
-    auto* p{GetPhonemeFromSymbol(tok)};
-    syllable_part->push_back(p);
-    
+    auto converted{converter_(tok)};
+
+    if (converted == std::nullopt) {
+      throw std::logic_error("Invalid token passed for parsing.");
+    };
+
+    auto* phoneme = GetPhonemeFromSymbol(converted.value());
+    syllable_part->push_back(phoneme);
+
     for (auto& rule : rules_) {
       if (rule->GetType() != current_part) continue;
 
       if (!rule->IsValid(*syllable_part) && syllable_part->empty()) {
         syllable_part->pop_back();
-        
+
         switch (current_part) {
-          case RuleType::Onset:
-            current_part = RuleType::Nucleus;
-            syllable_part = &nucleus;
-            break;
-          case RuleType::Nucleus:
-            current_part = RuleType::Coda;
-            syllable_part = &coda;
-            break;
-          case RuleType::Coda:
-            current_part = RuleType::Onset;
-            syllable_part = &onset;
-            result.emplace_back(onset, nucleus, coda);
-            onset.clear();
-            nucleus.clear();
-            coda.clear();
-            break;
-          default:
-            throw std::logic_error("Unknown rule type reached.");
-            break;
+        case RuleType::Onset:
+          current_part = RuleType::Nucleus;
+          syllable_part = &nucleus;
+          break;
+        case RuleType::Nucleus:
+          current_part = RuleType::Coda;
+          syllable_part = &coda;
+          break;
+        case RuleType::Coda:
+          current_part = RuleType::Onset;
+          syllable_part = &onset;
+          result.emplace_back(onset, nucleus, coda);
+          onset.clear();
+          nucleus.clear();
+          coda.clear();
+          break;
+        default:
+          throw std::logic_error("Unknown rule type reached.");
+          break;
         }
       }
     }

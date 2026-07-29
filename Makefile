@@ -1,5 +1,5 @@
 CXX=clang++
-CXX_FLAGS=-std=c++20 -Iincludes -Wall -Wextra -Werror -O0 -gdwarf-4 -MMD -MP
+CXX_FLAGS=-std=c++2b -Iincludes -Wall -Wextra -Werror -O0 -gdwarf-4 -MMD -MP
 SRC=$(wildcard src/*.cc)
 OBJ=$(SRC:.cc=.o)
 DEP=$(OBJ:.o=.d)

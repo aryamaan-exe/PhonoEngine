@@ -4,6 +4,7 @@
 #include <sstream>
 #include <thread>
 #include <vector>
+#include <map>
 
 #include "Consonant.hpp"
 #include "Language.hpp"
@@ -245,10 +246,11 @@ int main() {
 
   English.SetTokenConverter(
       [](const std::wstring& token) -> std::optional<Symbol> {
+        if (token.empty()) return std::nullopt;
+
         std::wstring stripped;
-        if (token.empty()) {
-          return std::nullopt;
-        } else if (std::iswdigit(token.back())) {
+
+        if (static_cast<bool>(std::iswdigit(token.back()))) {
           stripped = token.substr(0, token.size() - 1);
         } else {
           stripped = token;
@@ -279,6 +281,8 @@ int main() {
   const size_t kChunkSize{(lines.size() + kThreadCount - 1) / kThreadCount};
   std::vector<std::wstring> invalid;
 
+  std::map<std::wstring, Word> dictionary;
+
   for (size_t t{}; t < kThreadCount; ++t) {
     size_t begin{t * kChunkSize};
     size_t end{std::min(begin + kChunkSize, lines.size())};
@@ -289,7 +293,9 @@ int main() {
       for (size_t j{begin}; j < end; ++j) {
         const std::vector<std::wstring> tokens{Split(lines.at(j))};
         std::vector<Syllable> syllables{English.GetSyllablesFromTokens(tokens)};
-        Word w{syllables};
+        Word word{syllables};
+        const std::wstring& spelling = tokens.at(0);
+        dictionary[spelling] = word;
       }
     });
   }

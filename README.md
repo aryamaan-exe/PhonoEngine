@@ -1,10 +1,10 @@
 # PhonoEngine
 
-Language phonology validator and rule engine.
+PhonoEngine is a phonological rule engine which describes constructs from phonemes all the way to languages. You can define all phonemes in your language and nucleus, onset, and coda rules. From there, you can validate words using the rule engine, generate new words using the rules, track sound changes, and so much more.
+
+The example in `driver.cc` is a concurrent version of the rule validation engine running on the Carnegie Mellon Pronouncing Dictionary. Other examples and test cases are in progress.
 
 C++ development environment cloned from [here](https://github.com/cs128-illinois/env-dotfiles).
-
-The file `src/driver.cc` contains some example code for using the classes described below.
 
 ## Classes
 
@@ -100,14 +100,20 @@ Abstract sound unit. Inherited by Consonant and Vowel.
 
 Used for defining a language's phonemic inventory and phonological rules.
 
+(`TokenConverter = std::function<std::optional<Symbol>(const std::wstring&)>`)
+
+A `TokenConverter` function should return `std::nullopt` for nonexistent tokens or a `Symbol` for the corresponding symbol. This can be used for Romaji, ARPABet (as shown in `driver.cc`) or any other system where an input dataset might not correspond with IPA or another desired writing system.
+
 1) `void AddPhoneme(std::unique_ptr<Phoneme> phoneme)`: Adds a phoneme to phonemic inventory.
 
 2) `void AddRule(Rule* rule)`: Adds a rule to the phonological ruleset.
 
-3) `ValidationResult Validate(Word word)`: Returns a `ValidationResult` struct, which has member variables `bool valid` and `std::wstring reason`. Reason is either the rule name which fails, or empty if valid.
+3) `void SetTokenConverter(TokenConverter converter)`: Takes in a 
 
-4) `Word BuildWordFromSymbols(std::vector<Symbol>& word)`: Returns a `Word` object constructed from phonemes from the language's phonemic inventory. These phonemes are constructed by matching the symbol defined for the phoneme.
+4) `ValidationResult Validate(Word word)`: Returns a `ValidationResult` struct, which has member variables `bool valid` and `std::wstring reason`. Reason is either the rule name which fails, or empty if valid.
 
-5) `Phoneme* GetPhonemeFromSymbol(Symbol symbol)`: Returns a phoneme pointer for any symbol according to the phonemic inventory.
+5) `Word BuildWordFromSymbols(std::vector<Symbol>& word)`: Returns a `Word` object constructed from phonemes from the language's phonemic inventory. These phonemes are constructed by matching the symbol defined for the phoneme.
 
-6) `std::vector<Syllable> GetSyllablesFromTokens(const std::vector<std::wstring>& tokens)`: Returns a syllable construction from given tokens.
+6) `Phoneme* GetPhonemeFromSymbol(Symbol symbol)`: Returns a phoneme pointer for any symbol according to the phonemic inventory.
+
+7) `std::vector<Syllable> GetSyllablesFromTokens(const std::vector<std::wstring>& tokens)`: Returns a syllable construction from given tokens.

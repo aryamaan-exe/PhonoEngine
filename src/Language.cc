@@ -1,11 +1,43 @@
 #include "Language.hpp"
 
 #include <format>
+#include <fstream>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <stdexcept>
 
 #include "Rule.hpp"
 #include "Syllable.hpp"
+
+using json = nlohmann::json;
+
+Language::Language(const std::string& filename) {
+  std::ifstream ifs{filename};
+  json language_data = json::parse(ifs);
+
+  for (const auto& phoneme_data : language_data["phonemes"]) {
+    Symbol symbol{phoneme_data["symbol"]};
+    auto type{phoneme_data["type"]};
+
+    if (type == "consonant") {
+      Place place{phoneme_data["place"]};
+      Manner manner{phoneme_data["manner"]};
+      bool voiced{phoneme_data["voiced"]};
+
+      symbols_.emplace(symbol, new Consonant{symbol, place, manner, voiced});
+    } else if (type == "vowel") {
+      Height height{phoneme_data["height"]};
+      Backness backness{phoneme_data["backness"]};
+      bool tense{phoneme_data["tense"]};
+      bool rounded{phoneme_data["rounded"]};
+
+      symbols_.emplace(symbol,
+                       new Vowel{symbol, height, backness, tense, rounded});
+    } else {
+      throw std::invalid_argument("Phoneme type must be consonant or vowel.");
+    }
+  };
+}
 
 void Language::AddPhoneme(std::unique_ptr<Phoneme> phoneme) {
   Symbol symbol = phoneme->GetSymbol();
@@ -14,13 +46,18 @@ void Language::AddPhoneme(std::unique_ptr<Phoneme> phoneme) {
   symbols_.insert({symbol, raw});
 }
 
+void Language::AddIPAPhoneme(const Symbol& ipa_symbol) {
+  auto prototype{kIPAChart.at(ipa_symbol)};
+  AddPhoneme(prototype->Clone());
+}
+
 void Language::AddRule(Rule* rule) { rules_.push_back(rule); }
 
 void Language::SetTokenConverter(TokenConverter converter) {
   converter_ = std::move(converter);
 }
 
-ValidationResult Language::Validate(Word word) {
+ValidationResult Language::Validate(const Word& word) {
   std::vector<Syllable> syllables = word.GetSyllables();
 
   for (const Syllable& syllable : syllables) {

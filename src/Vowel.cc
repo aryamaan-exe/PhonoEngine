@@ -13,6 +13,10 @@ Vowel::Vowel(Symbol symbol,
     tense_(tenseness),
     rounded_(roundedness) {}
 
+std::unique_ptr<Phoneme> Vowel::Clone() const {
+  return std::make_unique<Vowel>(*this);
+}
+
 Height Vowel::GetHeight() const { return height_; }
 
 Backness Vowel::GetBackness() const { return backness_; }

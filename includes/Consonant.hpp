@@ -5,6 +5,7 @@
 
 #include "Phoneme.hpp"
 
+// NOLINTBEGIN(readability-identifier-naming)
 enum class Place {
   Bilabial,
   Labiodental,
@@ -25,13 +26,23 @@ enum class Manner {
   Trill,
   Tap,
   Fricative,
+  LateralFricative,
   Approximant,
+  LateralApproximant,
   Affricate
 };
+// NOLINTEND(readability-identifier-naming)
 
 class Consonant : public Phoneme {
 public:
+  Consonant(const Consonant& other) = default;
+  Consonant(Consonant&&) = default;
+  Consonant& operator=(const Consonant& other) = default;
+  Consonant& operator=(Consonant&&) = default;
+  ~Consonant() override = default;
+
   Consonant(Symbol symbol, Place place, Manner manner, bool voiced);
+  std::unique_ptr<Phoneme> Clone() const override;
   Place GetPlace() const;
   Manner GetManner() const;
   bool Voiced() const;

@@ -1,10 +1,10 @@
 #include <array>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <sstream>
 #include <thread>
 #include <vector>
-#include <map>
 
 #include "Consonant.hpp"
 #include "Language.hpp"
@@ -74,87 +74,11 @@ std::vector<std::wstring> Split(const std::wstring& s) {
 }
 
 int main() {
+  // NOLINTBEGIN(readability-identifier-naming)
+
   Language English;
 
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"p", Place::Bilabial, Manner::Plosive, false));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"b", Place::Bilabial, Manner::Plosive, true));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"t", Place::Alveolar, Manner::Plosive, false));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"d", Place::Alveolar, Manner::Plosive, true));
-  English.AddPhoneme(
-      std::make_unique<Consonant>(L"k", Place::Velar, Manner::Plosive, false));
-  English.AddPhoneme(
-      std::make_unique<Consonant>(L"g", Place::Velar, Manner::Plosive, true));
-
-  English.AddPhoneme(
-      std::make_unique<Consonant>(L"m", Place::Bilabial, Manner::Nasal, true));
-  English.AddPhoneme(
-      std::make_unique<Consonant>(L"n", Place::Alveolar, Manner::Nasal, true));
-  English.AddPhoneme(
-      std::make_unique<Consonant>(L"ŋ", Place::Velar, Manner::Nasal, true));
-
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"f", Place::Labiodental, Manner::Fricative, false));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"v", Place::Labiodental, Manner::Fricative, true));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"θ", Place::Dental, Manner::Fricative, false));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"ð", Place::Dental, Manner::Fricative, true));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"s", Place::Alveolar, Manner::Fricative, false));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"z", Place::Alveolar, Manner::Fricative, true));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"ʃ", Place::Postalveolar, Manner::Fricative, false));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"ʒ", Place::Postalveolar, Manner::Fricative, true));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"h", Place::Glottal, Manner::Fricative, false));
-
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"l", Place::Alveolar, Manner::Approximant, true));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"ɹ", Place::Alveolar, Manner::Approximant, true));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"j", Place::Palatal, Manner::Approximant, true));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"w", Place::Bilabial, Manner::Approximant, true));
-
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"ʧ", Place::Postalveolar, Manner::Affricate, false));
-  English.AddPhoneme(std::make_unique<Consonant>(
-      L"ʤ", Place::Postalveolar, Manner::Affricate, true));
-  English.AddPhoneme(std::make_unique<Vowel>(
-      L"ɝ", Height::Mid, Backness::Central, false, false));
-
-  English.AddPhoneme(std::make_unique<Vowel>(
-      L"i", Height::High, Backness::Front, true, false));
-  English.AddPhoneme(std::make_unique<Vowel>(
-      L"ɪ", Height::High, Backness::Front, false, false));
-  English.AddPhoneme(
-      std::make_unique<Vowel>(L"e", Height::Mid, Backness::Front, true, false));
-  English.AddPhoneme(std::make_unique<Vowel>(
-      L"ɛ", Height::Mid, Backness::Front, false, false));
-  English.AddPhoneme(std::make_unique<Vowel>(
-      L"æ", Height::Low, Backness::Front, false, false));
-
-  English.AddPhoneme(std::make_unique<Vowel>(
-      L"ə", Height::Mid, Backness::Central, false, false));
-  English.AddPhoneme(std::make_unique<Vowel>(
-      L"ʌ", Height::Mid, Backness::Central, false, false));
-
-  English.AddPhoneme(
-      std::make_unique<Vowel>(L"u", Height::High, Backness::Back, true, true));
-  English.AddPhoneme(
-      std::make_unique<Vowel>(L"ʊ", Height::High, Backness::Back, false, true));
-  English.AddPhoneme(
-      std::make_unique<Vowel>(L"ɔ", Height::Mid, Backness::Back, false, true));
-  English.AddPhoneme(
-      std::make_unique<Vowel>(L"ɑ", Height::Low, Backness::Back, false, false));
+  English.AddIPAPhoneme(L"p");
 
   auto* nucleus_exists =
       new Rule(L"Nucleus must exist",
@@ -242,8 +166,6 @@ int main() {
 
   English.AddRule(coda_h_rule);
 
-  std::wifstream dict{"cmudict.dict"};
-
   English.SetTokenConverter(
       [](const std::wstring& token) -> std::optional<Symbol> {
         if (token.empty()) return std::nullopt;
@@ -268,35 +190,38 @@ int main() {
         return ipa;
       });
 
-  if (!dict) throw std::runtime_error("Could not open file");
+  // std::wifstream dict{"cmudict.dict"};
+  //   if (!dict) throw std::runtime_error("Could not open file");
 
-  std::vector<std::wstring> lines;
-  std::wstring line;
-  while (std::getline(dict, line)) {
-    lines.push_back(std::move(line));
-  }
+  //   std::vector<std::wstring> lines;
+  //   std::wstring line;
+  //   while (std::getline(dict, line)) {
+  //     lines.push_back(std::move(line));
+  //   }
 
-  const size_t kThreadCount{std::thread::hardware_concurrency()};
-  std::vector<std::jthread> threads;
-  const size_t kChunkSize{(lines.size() + kThreadCount - 1) / kThreadCount};
-  std::vector<std::wstring> invalid;
+  //   const size_t kThreadCount{std::thread::hardware_concurrency()};
+  //   std::vector<std::jthread> threads;
+  //   const size_t kChunkSize{(lines.size() + kThreadCount - 1) /
+  //   kThreadCount}; std::vector<std::wstring> invalid;
 
-  std::map<std::wstring, Word> dictionary;
+  //   std::map<std::wstring, Word> dictionary;
 
-  for (size_t t{}; t < kThreadCount; ++t) {
-    size_t begin{t * kChunkSize};
-    size_t end{std::min(begin + kChunkSize, lines.size())};
+  //   for (size_t t{}; t < kThreadCount; ++t) {
+  //     size_t begin{t * kChunkSize};
+  //     size_t end{std::min(begin + kChunkSize, lines.size())};
 
-    if (begin >= end) continue;
+  //     if (begin >= end) continue;
 
-    threads.emplace_back([&, begin, end] {
-      for (size_t j{begin}; j < end; ++j) {
-        const std::vector<std::wstring> tokens{Split(lines.at(j))};
-        std::vector<Syllable> syllables{English.GetSyllablesFromTokens(tokens)};
-        Word word{syllables};
-        const std::wstring& spelling = tokens.at(0);
-        dictionary[spelling] = word;
-      }
-    });
-  }
+  //     threads.emplace_back([&, begin, end] {
+  //       for (size_t j{begin}; j < end; ++j) {
+  //         const std::vector<std::wstring> tokens{Split(lines.at(j))};
+  //         std::vector<Syllable>
+  //         syllables{English.GetSyllablesFromTokens(tokens)}; Word
+  //         word{syllables}; const std::wstring& spelling = tokens.at(0);
+  //         dictionary[spelling] = word;
+  //       }
+  //     });
+  //   }
+
+  // NOLINTEND(readability-identifier-naming)
 }

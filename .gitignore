@@ -1,5 +1,7 @@
 src/*.o
 src/*.d
+tests/*.o
+tests/*.d
 bin/exec
 .devcontainer
 cmudict.dict

@@ -16,7 +16,7 @@ public:
   Phoneme& operator=(Phoneme&&) = default;
   virtual ~Phoneme() = default;
 
-  Phoneme(Symbol symbol, PhonemeType type);
+  Phoneme(const Symbol& symbol, PhonemeType type);
   virtual std::unique_ptr<Phoneme> Clone() const = 0;
   
   Symbol GetSymbol() const;

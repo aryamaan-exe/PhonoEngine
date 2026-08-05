@@ -7,7 +7,9 @@
 #include "Phoneme.hpp"
 #include "Syllable.hpp"
 
+// NOLINTBEGIN(readability-identifier-naming)
 enum class RuleType { Onset, Nucleus, Coda };
+// NOLINTEND(readability-identifier-naming)
 
 class Rule {
 public:

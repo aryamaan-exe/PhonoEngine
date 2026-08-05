@@ -1,67 +1,23 @@
 #include <array>
+#include <format>
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <mutex>
 #include <sstream>
 #include <thread>
 #include <vector>
 
 #include "Consonant.hpp"
+#include "English.hpp"
 #include "Language.hpp"
 #include "Rule.hpp"
 #include "Syllable.hpp"
 #include "Vowel.hpp"
 #include "Word.hpp"
 
-constexpr std::array<std::pair<std::string_view, Symbol>, 39> kPhoneticMap{{
-    {"AA", L"\u0251"},  // ɑ
-    {"AE", L"\u00E6"},  // æ
-    {"AH", L"\u028C"},  // ʌ
-    {"AO", L"\u0254"},  // ɔ
-    {"AW", L"\u0061"},  // a
-    {"AY", L"\u0061"},  // a
-    {"EH", L"\u025B"},  // ɛ
-    {"ER", L"\u025D"},  // ɝ
-    {"EY", L"\u0065"},  // e
-    {"IH", L"\u026A"},  // ɪ
-    {"IY", L"\u0069"},  // i
-    {"OW", L"\u006F"},  // o
-    {"OY", L"\u0254"},  // ɔ
-    {"UH", L"\u028A"},  // ʊ
-    {"UW", L"\u0075"},  // u
-
-    {"B", L"\u0062"},   // b
-    {"CH", L"\u02A7"},  // ʧ
-    {"D", L"\u0064"},   // d
-    {"DH", L"\u00F0"},  // ð
-    {"F", L"\u0066"},   // f
-    {"G", L"\u0261"},   // ɡ
-    {"HH", L"\u0068"},  // h
-    {"JH", L"\u02A4"},  // ʤ
-    {"K", L"\u006B"},   // k
-    {"L", L"\u006C"},   // l
-    {"M", L"\u006D"},   // m
-    {"N", L"\u006E"},   // n
-    {"NG", L"\u014B"},  // ŋ
-    {"P", L"\u0070"},   // p
-    {"R", L"\u0279"},   // ɹ
-    {"S", L"\u0073"},   // s
-    {"SH", L"\u0283"},  // ʃ
-    {"T", L"\u0074"},   // t
-    {"TH", L"\u03B8"},  // θ
-    {"V", L"\u0076"},   // v
-    {"W", L"\u0077"},   // w
-    {"Y", L"\u006A"},   // j
-    {"Z", L"\u007A"},   // z
-    {"ZH", L"\u0292"},  // ʒ
-}};
-
-constexpr Symbol Lookup(std::string_view key) {
-  auto it = std::find_if(kPhoneticMap.begin(),
-                         kPhoneticMap.end(),
-                         [&](auto& p) { return p.first == key; });
-  return it != kPhoneticMap.end() ? it->second : L"\0";
-}
+constexpr std::string_view kLogFilename{"error_words.txt"};
+constexpr std::string_view kInvalidFilename{"invalid.txt"};
 
 std::vector<std::wstring> Split(const std::wstring& s) {
   std::wistringstream iss{s};
@@ -76,152 +32,89 @@ std::vector<std::wstring> Split(const std::wstring& s) {
 int main() {
   // NOLINTBEGIN(readability-identifier-naming)
 
-  Language English;
+  const Language English{EnglishLang::BuildEnglish()};
 
-  English.AddIPAPhoneme(L"p");
+  std::cout << "Built language" << std::endl;
 
-  auto* nucleus_exists =
-      new Rule(L"Nucleus must exist",
-               RuleType::Nucleus,
-               [](const SyllablePart& nucleus) { return !nucleus.empty(); });
+  std::wifstream dict{"cmudict.dict"};
+  if (!dict) throw std::runtime_error("Could not open file");
 
-  auto* nucleus_only_vowels =
-      new Rule(L"Nucleus must contain only vowels",
-               RuleType::Nucleus,
-               [](const SyllablePart& nucleus) {
-                 for (const auto& p : nucleus) {
-                   if (p->GetType() != PhonemeType::kVowel) return false;
-                 }
-                 return true;
-               });
+  std::vector<std::wstring> lines;
+  std::wstring line;
+  while (std::getline(dict, line)) {
+    lines.push_back(std::move(line));
+  }
 
-  auto* onset_only_consonants =
-      new Rule(L"Onset must contain only consonants",
-               RuleType::Onset,
-               [](const SyllablePart& onset) {
-                 for (const auto& p : onset) {
-                   if (p->GetType() != PhonemeType::kConsonant) return false;
-                 }
-                 return true;
-               });
+  std::cout << "Loaded dictionary of " << lines.size() << " lines into memory"
+            << std::endl;
 
-  auto* coda_only_consonants =
-      new Rule(L"Coda must contain only consonants",
-               RuleType::Coda,
-               [](const SyllablePart& coda) {
-                 for (const auto& p : coda) {
-                   if (p->GetType() != PhonemeType::kConsonant) return false;
-                 }
-                 return true;
-               });
+  const size_t kThreadCount{std::thread::hardware_concurrency()};
+  const size_t kChunkSize{(lines.size() + kThreadCount - 1) / kThreadCount};
 
-  auto* max_onset_size =
-      new Rule(L"Onset may have at most 3 consonants",
-               RuleType::Onset,
-               [](const SyllablePart& onset) { return onset.size() <= 3; });
+  std::map<std::wstring, Word> dictionary;
+  std::vector<std::wstring> error;
 
-  auto* max_coda_size =
-      new Rule(L"Coda may have at most 4 consonants",
-               RuleType::Coda,
-               [](const SyllablePart& coda) { return coda.size() <= 4; });
+  std::vector<std::jthread> threads;
+  std::vector<std::pair<std::wstring, std::wstring>> invalid_words;
 
-  auto* max_nucleus_size =
-      new Rule(L"Nucleus may have at most 2 vowels",
-               RuleType::Nucleus,
-               [](const SyllablePart& nucleus) { return nucleus.size() <= 2; });
+  std::mutex dict_m;
+  std::mutex err_m;
+  std::mutex inv_m;
 
-  auto* three_consonant_onset_rule =
-      new Rule(L"Three-consonant English onsets must start with s",
-               RuleType::Onset,
-               [](const SyllablePart& onset) {
-                 if (onset.size() != 3) return true;
-                 return onset[0]->GetSymbol() == L"s";
-               });
+  for (size_t t{}; t < kThreadCount; ++t) {
+    size_t begin{t * kChunkSize};
+    size_t end{std::min(begin + kChunkSize, lines.size())};
 
-  auto* english_onset_ng_rule = new Rule(L"Syllables cannot begin with ng",
-                                         RuleType::Onset,
-                                         [](const SyllablePart& onset) {
-                                           if (onset.empty()) return true;
-                                           return onset[0]->GetSymbol() != L"ŋ";
-                                         });
+    if (begin >= end) continue;
 
-  auto* coda_h_rule = new Rule(L"Syllables cannot end with h",
-                               RuleType::Coda,
-                               [](const SyllablePart& coda) {
-                                 if (coda.empty()) return true;
-                                 return coda.back()->GetSymbol() != L"h";
-                               });
+    threads.emplace_back([&, begin, end] {
+      for (size_t j{begin}; j < end; ++j) {
+        try {
+          const std::vector<std::wstring> tokens{Split(lines.at(j))};
+          std::vector<Syllable> syllables{
+              English.GetSyllablesFromTokens(tokens)};
+          Word word{syllables};
 
-  English.AddRule(nucleus_exists);
-  English.AddRule(nucleus_only_vowels);
-  English.AddRule(onset_only_consonants);
-  English.AddRule(coda_only_consonants);
+          const ValidationResult validation = English.Validate(word);
+          if (!validation.valid) {
+            std::lock_guard<std::mutex> lock(inv_m);
+            invalid_words.push_back({lines.at(j), validation.reason});
+            continue;
+          }
 
-  English.AddRule(max_onset_size);
-  English.AddRule(max_coda_size);
-  English.AddRule(max_nucleus_size);
-
-  English.AddRule(three_consonant_onset_rule);
-  English.AddRule(english_onset_ng_rule);
-
-  English.AddRule(coda_h_rule);
-
-  English.SetTokenConverter(
-      [](const std::wstring& token) -> std::optional<Symbol> {
-        if (token.empty()) return std::nullopt;
-
-        std::wstring stripped;
-
-        if (static_cast<bool>(std::iswdigit(token.back()))) {
-          stripped = token.substr(0, token.size() - 1);
-        } else {
-          stripped = token;
+          std::lock_guard<std::mutex> lock(dict_m);
+          dictionary.insert_or_assign(tokens.at(0), word);
+        } catch (const std::exception& e) {
+          std::lock_guard<std::mutex> lock(err_m);
+          error.push_back(lines.at(j) + L" | " + Language::Utf8ToWide(e.what()));
         }
+      }
+    });
+  }
 
-        std::string key;
-        key.reserve(stripped.size());
-        for (wchar_t c : stripped) {
-          if (c > 0x7F) return std::nullopt;
-          key.push_back(static_cast<char>(c));
-        }
+  threads.clear();
 
-        Symbol ipa = Lookup(key);
-        if (ipa == L"\0") return std::nullopt;
-        return ipa;
-      });
+  std::cout
+      << std::format(
+             "Found {} words that could not be constructed, writing to {}.",
+             error.size(),
+             kLogFilename)
+      << std::endl;
 
-  // std::wifstream dict{"cmudict.dict"};
-  //   if (!dict) throw std::runtime_error("Could not open file");
+  std::wofstream err_ofs{kLogFilename.data()};
+  for (const auto& word : error) {
+    err_ofs << word << '\n';
+  }
 
-  //   std::vector<std::wstring> lines;
-  //   std::wstring line;
-  //   while (std::getline(dict, line)) {
-  //     lines.push_back(std::move(line));
-  //   }
+  std::cout << std::format("Found {} words that were invalid, writing to {}.",
+                           invalid_words.size(),
+                           kInvalidFilename)
+            << std::endl;
 
-  //   const size_t kThreadCount{std::thread::hardware_concurrency()};
-  //   std::vector<std::jthread> threads;
-  //   const size_t kChunkSize{(lines.size() + kThreadCount - 1) /
-  //   kThreadCount}; std::vector<std::wstring> invalid;
-
-  //   std::map<std::wstring, Word> dictionary;
-
-  //   for (size_t t{}; t < kThreadCount; ++t) {
-  //     size_t begin{t * kChunkSize};
-  //     size_t end{std::min(begin + kChunkSize, lines.size())};
-
-  //     if (begin >= end) continue;
-
-  //     threads.emplace_back([&, begin, end] {
-  //       for (size_t j{begin}; j < end; ++j) {
-  //         const std::vector<std::wstring> tokens{Split(lines.at(j))};
-  //         std::vector<Syllable>
-  //         syllables{English.GetSyllablesFromTokens(tokens)}; Word
-  //         word{syllables}; const std::wstring& spelling = tokens.at(0);
-  //         dictionary[spelling] = word;
-  //       }
-  //     });
-  //   }
+  std::wofstream inv_ofs{kInvalidFilename.data()};
+  for (const auto& [w, r] : invalid_words) {
+    inv_ofs << w << ": " << r << '\n';
+  }
 
   // NOLINTEND(readability-identifier-naming)
 }

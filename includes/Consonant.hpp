@@ -41,7 +41,7 @@ public:
   Consonant& operator=(Consonant&&) = default;
   ~Consonant() override = default;
 
-  Consonant(Symbol symbol, Place place, Manner manner, bool voiced);
+  Consonant(const Symbol& symbol, Place place, Manner manner, bool voiced);
   std::unique_ptr<Phoneme> Clone() const override;
   Place GetPlace() const;
   Manner GetManner() const;

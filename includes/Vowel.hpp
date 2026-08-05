@@ -18,7 +18,7 @@ public:
   Vowel& operator=(Vowel&&) = default;
   ~Vowel() override = default;
 
-  Vowel(Symbol symbol,
+  Vowel(const Symbol& symbol,
         Height height,
         Backness backness,
         bool tenseness,

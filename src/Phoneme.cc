@@ -1,6 +1,6 @@
 #include "Phoneme.hpp"
 
-Phoneme::Phoneme(Symbol symbol, PhonemeType type):
+Phoneme::Phoneme(const Symbol& symbol, PhonemeType type):
     symbol_(symbol), type_(type) {}
 
 Symbol Phoneme::GetSymbol() const { return symbol_; }

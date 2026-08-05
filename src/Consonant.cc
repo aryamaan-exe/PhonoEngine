@@ -2,8 +2,11 @@
 
 #include "Phoneme.hpp"
 
-Consonant::Consonant(Symbol symbol, Place place, Manner manner, bool voicing):
-    Phoneme(std::move(symbol), PhonemeType::kConsonant),
+Consonant::Consonant(const Symbol& symbol,
+                     Place place,
+                     Manner manner,
+                     bool voicing):
+    Phoneme(symbol, PhonemeType::kConsonant),
     place_(place),
     manner_(manner),
     voiced_(voicing) {}

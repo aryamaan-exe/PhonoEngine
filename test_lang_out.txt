@@ -1,0 +1,4 @@
+SYMBOLS:
+u i e a m b k d g n t h o s p r w l 
+RULES:
+Test rule
